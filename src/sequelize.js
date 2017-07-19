@@ -313,4 +313,16 @@ Sequelize.prototype.literal = function (arg) {
 	return arg;
 };
 
+/**
+* Sequelize.fn as a noop 
+* Should be used with query queuing to return the expected data
+*/
+Sequelize.fn = function () {}
+
+/**
+* Sequelize.col as a noop
+* Should be used with query queuing to return the expected data
+*/
+Sequelize.col = function () {}
+
 module.exports = Sequelize;

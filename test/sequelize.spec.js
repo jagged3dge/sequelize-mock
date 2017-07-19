@@ -79,6 +79,14 @@ describe('Sequelize', function () {
 		Sequelize.should.have.property('GEOMETRY').which.is.a.Function();
 		Sequelize.should.have.property('GEOGRAPHY').which.is.a.Function();
 	});
+
+	it('should have `col` method', function () {
+		Sequelize.should.have.property('col').which.is.a.Function();
+	});
+
+	it('should have `fn` method', function () {
+		Sequelize.should.have.property('fn').which.is.a.Function();
+	});
 	
 	describe('__constructor', function () {
 		it('should default dialect to mock', function () {
