@@ -20,7 +20,8 @@ var Sequelize = proxyquire('../src/sequelize', {
 	'./utils'  : UtilsMock,
 	'./errors' : ErrorMock,
 	'./queryinterface' : QueryInterfaceMock,
-	'../package.json' : PackageMock
+	'../package.json'  : PackageMock,
+	'./data-types'     : function () {}
 });
 
 describe('Sequelize', function () {
@@ -48,44 +49,6 @@ describe('Sequelize', function () {
 	it('should alias BaseError class', function () {
 		Sequelize.should.have.property('Error').which.is.equal(ErrorMock.BaseError);
 		Sequelize.prototype.should.have.property('Error').which.is.equal(ErrorMock.BaseError);
-	});
-	
-	it('should have data types exposed on class', function () {
-		Sequelize.should.have.property('STRING').which.is.a.Function();
-		Sequelize.should.have.property('CHAR').which.is.a.Function();
-		Sequelize.should.have.property('TEXT').which.is.a.Function();
-		Sequelize.should.have.property('INTEGER').which.is.a.Function();
-		Sequelize.should.have.property('BIGINT').which.is.a.Function();
-		Sequelize.should.have.property('FLOAT').which.is.a.Function();
-		Sequelize.should.have.property('REAL').which.is.a.Function();
-		Sequelize.should.have.property('DOUBLE').which.is.a.Function();
-		Sequelize.should.have.property('DECIMAL').which.is.a.Function();
-		Sequelize.should.have.property('BOOLEAN').which.is.a.Function();
-		Sequelize.should.have.property('TIME').which.is.a.Function();
-		Sequelize.should.have.property('DATE').which.is.a.Function();
-		Sequelize.should.have.property('DATEONLY').which.is.a.Function();
-		Sequelize.should.have.property('HSTORE').which.is.a.Function();
-		Sequelize.should.have.property('JSON').which.is.a.Function();
-		Sequelize.should.have.property('JSONB').which.is.a.Function();
-		Sequelize.should.have.property('NOW').which.is.a.Function();
-		Sequelize.should.have.property('BLOB').which.is.a.Function();
-		Sequelize.should.have.property('RANGE').which.is.a.Function();
-		Sequelize.should.have.property('UUID').which.is.a.Function();
-		Sequelize.should.have.property('UUIDV1').which.is.a.Function();
-		Sequelize.should.have.property('UUIDV4').which.is.a.Function();
-		Sequelize.should.have.property('VIRTUAL').which.is.a.Function();
-		Sequelize.should.have.property('ENUM').which.is.a.Function();
-		Sequelize.should.have.property('ARRAY').which.is.a.Function();
-		Sequelize.should.have.property('GEOMETRY').which.is.a.Function();
-		Sequelize.should.have.property('GEOGRAPHY').which.is.a.Function();
-	});
-
-	it('should have `col` method', function () {
-		Sequelize.should.have.property('col').which.is.a.Function();
-	});
-
-	it('should have `fn` method', function () {
-		Sequelize.should.have.property('fn').which.is.a.Function();
 	});
 	
 	describe('__constructor', function () {
@@ -210,6 +173,40 @@ describe('Sequelize', function () {
 		it('should return a Mock Model', function () {
 			var seq = new Sequelize();
 			seq.define().should.be.instanceOf(ModelMock);
+		});
+	});
+
+	describe('#isDefined', function() {
+		it('should return true if the model is defined', function() {
+			var seq = new Sequelize();
+			seq.define('test', {});
+
+			seq.isDefined('test').should.be.true();
+		});
+
+		it('should return false if the model is not defined', function() {
+			var seq = new Sequelize();
+
+			seq.isDefined('test').should.be.false()
+		});
+	});
+
+	describe('#model', function() {
+		it('should return a previously defined Mock Model referenced its name', function() {
+			var seq = new Sequelize();
+			var mock = seq.define('test', {});
+			seq.model('test').should.be.equal(mock);
+		});
+
+		it('should throw an error if there is no model with the specified name', function() {
+			var seq = new Sequelize();
+			var modelName = 'test';
+			var callModel = function() {
+				seq.model(modelName);
+			};
+
+			callModel.should.throw(Error);
+			callModel.should.throw(modelName + ' has not been defined');
 		});
 	});
 	
