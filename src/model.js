@@ -622,8 +622,28 @@ fakeModel.prototype.belongsToMany = fakeModel.prototype.hasMany = function (item
 	this.Instance.prototype['create' + singular] = item.create ? item.create.bind(item) : noop;
 	this.Instance.prototype['remove' + singular] = noop;
 	this.Instance.prototype['remove' + plural] = noop;
-	this.Instance.prototype['has' + singular] = function () { return Promise.resolve(false); };
-	this.Instance.prototype['has' + plural] = function () { return Promise.resolve(false); };
+	// this.Instance.prototype['has' + singular] = function () { return Promise.resolve(false); };
+	// this.Instance.prototype['has' + plural] = function () { return Promise.resolve(false); };
+	this.Instance.prototype['has' + singular] = function () {
+		return self.$query({
+			query: 'has' + singular,
+			queryOptions: arguments,
+			options: {},
+			fallbackFn: function () {
+				return Promise.resolve(false);
+			}
+		});
+	};
+	this.Instance.prototype['has' + plural] = function () {
+		return self.$query({
+			query: 'has' + plural,
+			queryOptions: arguments,
+			options: {},
+			fallbackFn: function () {
+				return Promise.resolve(false);
+			}
+		});
+	};
 	this.Instance.prototype['count' + plural] = function () { return Promise.resolve(0); };
 	
 	return {
